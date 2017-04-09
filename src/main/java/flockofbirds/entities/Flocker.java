@@ -14,7 +14,7 @@ public interface Flocker extends Bird {
 
     final NamedAttributeType<Double> WEARINESS_PERCENTAGE_TYPE = newNamedDoubleType("wearinessPercentage");
 
-    public default void bite(final Bird bird) {
+    public default void join(final Bird bird) {
 	bird.unmarkAsType(Loner.class);
 	bird.markAsType(Joiner.class);
 	bird.scheduleForActor(new StartJoining(), TICK_INTERVAL, TICK_INTERVAL, TimeUnit.MILLISECONDS);

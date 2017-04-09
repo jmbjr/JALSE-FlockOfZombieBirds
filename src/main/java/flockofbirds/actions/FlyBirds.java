@@ -68,7 +68,7 @@ public class FlyBirds implements Action<Entity> {
 	// Check in range of biting
 	final int size = FlockProperties.getSize();
 	if (dx * dx + dy * dy < size * size) {
-	    bird.asType(Flocker.class).bite(loner);
+	    bird.asType(Flocker.class).join(loner);
 	}
 
 	// Convert

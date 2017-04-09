@@ -25,28 +25,28 @@ public class FlockingListener implements AttributeListener<Double> {
 
     @Override
     public void attributeAdded(final AttributeEvent<Double> event) {
-	final Bird person = ((Entity) event.getContainer()).asType(Bird.class);
-	final double infection = event.getValue();
+	final Bird bird = ((Entity) event.getContainer()).asType(Bird.class);
+	final double flocking = event.getValue();
 
 	// Check infected
-	if (infection >= 1.0) {
-	    person.unmarkAsType(Joiner.class);
-	    enflockBird(person);
+	if (flocking >= 1.0) {
+	    bird.unmarkAsType(Joiner.class);
+	    enflockBird(bird);
 	    return;
 	}
 
 	// Base colours
-	final Color healthyColour = FlockProperties.getColour(Loner.class);
-	final Color infectedColour = FlockProperties.getColour(Flocker.class);
+	final Color lonerColour = FlockProperties.getColour(Loner.class);
+	final Color flockingColour = FlockProperties.getColour(Flocker.class);
 
-	// Gradually transition from "healthy" to "infected" color
-	final float r = (float) ((healthyColour.getRed() * (1. - infection) + infectedColour.getRed() * infection)
+	// Gradually transition from "loner" to "flocking" color
+	final float r = (float) ((lonerColour.getRed() * (1. - flocking) + flockingColour.getRed() * flocking)
 		/ 255.);
-	final float g = (float) ((healthyColour.getGreen() * (1. - infection) + infectedColour.getGreen() * infection)
+	final float g = (float) ((lonerColour.getGreen() * (1. - flocking) + flockingColour.getGreen() * flocking)
 		/ 255.);
-	final float b = (float) ((healthyColour.getBlue() * (1. - infection) + infectedColour.getBlue() * infection)
+	final float b = (float) ((lonerColour.getBlue() * (1. - flocking) + flockingColour.getBlue() * flocking)
 		/ 255.);
 
-	person.setColour(new Color(r, g, b));
+	bird.setColour(new Color(r, g, b));
     }
 }

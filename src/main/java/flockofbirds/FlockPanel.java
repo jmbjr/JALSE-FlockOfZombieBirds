@@ -132,7 +132,7 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
 	    return pos.x - 5 <= point.x && pos.x + size + 5 >= point.x && pos.y - 5 <= point.y
 		    && pos.y + size + 5 >= point.y;
 	}).forEach(p -> {
-	    // Infect if not infected already
+	    // enflock if not flocking already
 	    if (p.unmarkAsType(Loner.class) || p.unmarkAsType(Joiner.class)) {
 		FlockingListener.enflockBird(p);
 	    }
