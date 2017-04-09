@@ -9,11 +9,11 @@ public class TransformationListener implements EntityTypeListener {
 
     @Override
     public void entityMarkedAsType(final EntityTypeEvent event) {
-	final Bird person = event.getEntity().asType(Bird.class);
+	final Bird bird = event.getEntity().asType(Bird.class);
 	final Class<? extends Entity> type = event.getTypeChange();
 
-	person.setColour(FlockProperties.getColour(type));
-	person.setSightRange(FlockProperties.getSightRange(type));
-	person.setSpeed(FlockProperties.getSpeed(type));
+	bird.setColour(FlockProperties.getColour(type));
+	bird.setSightRange(FlockProperties.getSightRange(type));
+	bird.setSpeed(FlockProperties.getSpeed(type));
     }
 }

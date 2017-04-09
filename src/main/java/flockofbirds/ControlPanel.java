@@ -38,59 +38,59 @@ public class ControlPanel extends JPanel {
 	return ((JSlider) e.getSource()).getValue();
     }
 
-    public ControlPanel(final FlockPanel zombiesPanel) {
+    public ControlPanel(final FlockPanel flockPanel) {
 	setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 	// Population
 	add(newLabel("Population"));
 	add(newSlider(0, 200, 50, FlockProperties.getPopulation(), e -> {
 	    FlockProperties.setPopulation(sliderValue(e));
-	    zombiesPanel.adjustPopulation();
+	    flockPanel.adjustPopulation();
 	}));
 	add(Box.createVerticalGlue());
 
 	// Infected speed
-	add(newLabel("Infected Relative Speed (%)"));
+	add(newLabel("Flocker Relative Speed (%)"));
 	add(newSlider(50, 200, 50,
 		(int) (100 * FlockProperties.getSpeed(Flocker.class) / FlockProperties.getSpeed(Loner.class)),
 		e -> {
-		    FlockProperties.setInfectedRelativeSpeed(sliderValue(e));
-		    zombiesPanel.adjustInfectedSpeed();
+		    FlockProperties.setFlockerRelativeSpeed(sliderValue(e));
+		    flockPanel.adjustFlockerSpeed();
 		}));
 	add(Box.createVerticalGlue());
 
 	// Healthy sight
 	add(newLabel("Healthy Sight Range"));
 	add(newSlider(0, 200, 50, FlockProperties.getSightRange(Loner.class), e -> {
-	    FlockProperties.setHealthySightRange(sliderValue(e));
-	    zombiesPanel.adjustSightRange(Loner.class);
+	    FlockProperties.setLonerSightRange(sliderValue(e));
+	    flockPanel.adjustSightRange(Loner.class);
 	}));
 	add(Box.createVerticalGlue());
 
 	// Infected sight
-	add(newLabel("Infected Sight Range"));
+	add(newLabel("Flocker Sight Range"));
 	add(newSlider(0, 200, 50, FlockProperties.getSightRange(Flocker.class), e -> {
-	    FlockProperties.setInfectedSightRange(sliderValue(e));
-	    zombiesPanel.adjustSightRange(Flocker.class);
+	    FlockProperties.setFlockerSightRange(sliderValue(e));
+	    flockPanel.adjustSightRange(Flocker.class);
 	}));
 	add(Box.createVerticalGlue());
 
 	// Infection time
-	add(newLabel("Infection Time (s.)"));
-	add(newSlider(0, 30, 5, (int) FlockProperties.getInfectionTime(),
-		e -> FlockProperties.setInfectionTime(sliderValue(e))));
+	add(newLabel("Flocking Time (s.)"));
+	add(newSlider(0, 30, 5, (int) FlockProperties.getFlockerTime(),
+		e -> FlockProperties.setFLockingTime(sliderValue(e))));
 	add(Box.createVerticalGlue());
 
 	// Starvation time
-	add(newLabel("Starvation Time (s.)"));
-	add(newSlider(0, 30, 5, (int) FlockProperties.getStarveTime(),
-		e -> FlockProperties.setStarveTime(sliderValue(e))));
+	add(newLabel("Exhaustion Time (s.)"));
+	add(newSlider(0, 30, 5, (int) FlockProperties.getExhaustTime(),
+		e -> FlockProperties.setExhaustTime(sliderValue(e))));
 	add(Box.createVerticalGlue());
 
 	// Reset
 	final JButton resetButton = new JButton("Reset Simulation");
 	resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-	resetButton.addActionListener(e -> zombiesPanel.reset());
+	resetButton.addActionListener(e -> flockPanel.reset());
 	add(resetButton);
     }
 }

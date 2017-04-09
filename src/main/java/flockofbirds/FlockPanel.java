@@ -38,12 +38,12 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
     public static final int WIDTH = 700;
     public static final int HEIGHT = 500;
 
-    private static void drawElement(final Graphics g, final Bird person) {
-	final Point position = person.getPosition();
+    private static void drawElement(final Graphics g, final Bird bird) {
+	final Point position = bird.getPosition();
 	final int size = FlockProperties.getSize();
 	g.setColor(Color.BLACK);
 	g.fillOval(position.x - 2, position.y - 2, size + 4, size + 4);
-	g.setColor(person.getColour());
+	g.setColor(bird.getColour());
 	g.fillOval(position.x, position.y, size, size);
     }
 
@@ -73,17 +73,17 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
 	repaint();
     }
 
-    private void addPersonAtRandomPosition() {
-	final Bird person = getField().newEntity(Bird.class);
-	person.setPosition(randomPosition());
-	person.setAngle(randomAngle());
-	person.addAttributeListener(Joiner.INFECTION_PERCENTAGE_TYPE, new FlockingListener());
-	person.addAttributeListener(Flocker.HUNGER_PERCENTAGE_TYPE, new ExhaustedListener());
-	person.addEntityTypeListener(new TransformationListener());
-	person.markAsType(Loner.class);
+    private void addBirdAtRandomPosition() {
+	final Bird bird = getField().newEntity(Bird.class);
+	bird.setPosition(randomPosition());
+	bird.setAngle(randomAngle());
+	bird.addAttributeListener(Joiner.FLOCKING_PERCENTAGE_TYPE, new FlockingListener());
+	bird.addAttributeListener(Flocker.WEARINESS_PERCENTAGE_TYPE, new ExhaustedListener());
+	bird.addEntityTypeListener(new TransformationListener());
+	bird.markAsType(Loner.class);
     }
 
-    public void adjustInfectedSpeed() {
+    public void adjustFlockerSpeed() {
 	final double speed = FlockProperties.getSpeed(Flocker.class);
 	getField().streamEntitiesOfType(Flocker.class).forEach(p -> p.setSpeed(speed));
     }
@@ -93,12 +93,12 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
 	int count = getField().getEntityCount();
 	// Increase population
 	while (count < population) {
-	    addPersonAtRandomPosition();
+	    addBirdAtRandomPosition();
 	    count++;
 	}
 	// Decrease population
 	while (count > population) {
-	    removeRandomPerson();
+	    removeRandomBird();
 	    count--;
 	}
     }
@@ -124,17 +124,17 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
 
     @Override
     public void mouseClicked(final MouseEvent e) {
-	// Infect clicked person(s)
+	// enFlock clicked bird(s)
 	final Point point = e.getPoint();
 	final int size = FlockProperties.getSize();
-	getField().streamPeople().filter(p -> {
+	getField().streamBirds().filter(p -> {
 	    final Point pos = p.getPosition();
 	    return pos.x - 5 <= point.x && pos.x + size + 5 >= point.x && pos.y - 5 <= point.y
 		    && pos.y + size + 5 >= point.y;
 	}).forEach(p -> {
 	    // Infect if not infected already
 	    if (p.unmarkAsType(Loner.class) || p.unmarkAsType(Joiner.class)) {
-		FlockingListener.infectPerson(p);
+		FlockingListener.enflockBird(p);
 	    }
 	});
     }
@@ -157,7 +157,7 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
 	super.paintComponent(g);
 
 	// Draw people
-	getField().streamPeople().forEach(p -> drawElement(g, p));
+	getField().streamBirds().forEach(p -> drawElement(g, p));
 
 	// Sync (Linux fix)
 	Toolkit.getDefaultToolkit().sync();
@@ -174,7 +174,7 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
 	return new Point(size + rand.nextInt(WIDTH), size + rand.nextInt(HEIGHT));
     }
 
-    private void removeRandomPerson() {
+    private void removeRandomBird() {
 	Entities.randomEntity(getField()).ifPresent(Entity::kill);
     }
 
@@ -184,7 +184,7 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
 	// Create randomly-placed healthy people
 	final int population = FlockProperties.getPopulation();
 	for (int i = 0; i < population; i++) {
-	    addPersonAtRandomPosition();
+	    addBirdAtRandomPosition();
 	}
     }
 }

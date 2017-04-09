@@ -8,11 +8,11 @@ import jalse.entities.annotations.SetAttribute;
 
 public interface Joiner extends Bird {
 
-    final NamedAttributeType<Double> INFECTION_PERCENTAGE_TYPE = newNamedDoubleType("infectionPercentage");
+    final NamedAttributeType<Double> FLOCKING_PERCENTAGE_TYPE = newNamedDoubleType("flockingPercentage");
 
     @GetAttribute
-    double getInfectionPercentage();
+    double getFlockingPercentage();
 
     @SetAttribute
-    void setInfectionPercentage(double infectionPercentage);
+    void setFlockingPercentage(double flockingPercentage);
 }

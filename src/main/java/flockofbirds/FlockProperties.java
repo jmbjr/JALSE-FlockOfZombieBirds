@@ -31,9 +31,9 @@ public class FlockProperties {
 
     private static final int SIZE = 16;
 
-    private static AtomicLong infectionTime = new AtomicLong(Double.doubleToLongBits(5));
+    private static AtomicLong flockingTime = new AtomicLong(Double.doubleToLongBits(5));
 
-    private static AtomicLong starveTime = new AtomicLong(Double.doubleToLongBits(10));
+    private static AtomicLong exhaustTime = new AtomicLong(Double.doubleToLongBits(10));
 
     private static AtomicInteger population = new AtomicInteger(100);
 
@@ -50,8 +50,8 @@ public class FlockProperties {
 	return props.get(type).colour.get();
     }
 
-    public static double getInfectionTime() {
-	return Double.longBitsToDouble(infectionTime.get());
+    public static double getFlockerTime() {
+	return Double.longBitsToDouble(flockingTime.get());
     }
 
     public static int getPopulation() {
@@ -70,25 +70,25 @@ public class FlockProperties {
 	return Double.longBitsToDouble(props.get(type).speed.get());
     }
 
-    public static double getStarveTime() {
-	return Double.longBitsToDouble(starveTime.get());
+    public static double getExhaustTime() {
+	return Double.longBitsToDouble(exhaustTime.get());
     }
 
-    public static void setHealthySightRange(final int sightRange) {
+    public static void setLonerSightRange(final int sightRange) {
 	setSightRange(Loner.class, sightRange);
     }
 
-    public static void setInfectedRelativeSpeed(final double percentage) {
+    public static void setFlockerRelativeSpeed(final double percentage) {
 	final double fraction = percentage / 100;
 	props.get(Flocker.class).speed.set(Double.doubleToLongBits(fraction * getSpeed(Loner.class)));
     }
 
-    public static void setInfectedSightRange(final int sightRange) {
+    public static void setFlockerSightRange(final int sightRange) {
 	setSightRange(Flocker.class, sightRange);
     }
 
-    public static void setInfectionTime(final double infectionTime) {
-	FlockProperties.infectionTime.set(Double.doubleToLongBits(infectionTime));
+    public static void setFLockingTime(final double flockingTime) {
+	FlockProperties.flockingTime.set(Double.doubleToLongBits(flockingTime));
     }
 
     public static void setPopulation(final int population) {
@@ -103,7 +103,7 @@ public class FlockProperties {
 	props.get(type).speed.set(Double.doubleToLongBits(speed));
     }
 
-    public static void setStarveTime(final double starveTime) {
-	FlockProperties.starveTime.set(Double.doubleToLongBits(starveTime));
+    public static void setExhaustTime(final double exhaustTime) {
+	FlockProperties.exhaustTime.set(Double.doubleToLongBits(exhaustTime));
     }
 }

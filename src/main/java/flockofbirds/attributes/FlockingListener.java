@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.util.concurrent.TimeUnit;
 
 import flockofbirds.FlockProperties;
-import flockofbirds.actions.Starve;
+import flockofbirds.actions.Exhaust;
 import flockofbirds.entities.Joiner;
 import flockofbirds.entities.Loner;
 import flockofbirds.entities.Flocker;
@@ -17,10 +17,10 @@ import jalse.entities.Entity;
 
 public class FlockingListener implements AttributeListener<Double> {
 
-    public static void infectPerson(final Bird p) {
+    public static void enflockBird(final Bird p) {
 	p.cancelAllScheduledForActor();
 	p.markAsType(Flocker.class);
-	p.scheduleForActor(new Starve(), TICK_INTERVAL, TICK_INTERVAL, TimeUnit.MILLISECONDS);
+	p.scheduleForActor(new Exhaust(), TICK_INTERVAL, TICK_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class FlockingListener implements AttributeListener<Double> {
 	// Check infected
 	if (infection >= 1.0) {
 	    person.unmarkAsType(Joiner.class);
-	    infectPerson(person);
+	    enflockBird(person);
 	    return;
 	}
 
