@@ -1,4 +1,4 @@
-package zombies;
+package flockofbirds;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -7,22 +7,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import flockofbirds.entities.Joiner;
+import flockofbirds.entities.Exhausted;
+import flockofbirds.entities.Loner;
+import flockofbirds.entities.Flocker;
+import flockofbirds.entities.Bird;
 import jalse.entities.Entity;
-import zombies.entities.Carrier;
-import zombies.entities.Corpse;
-import zombies.entities.Healthy;
-import zombies.entities.Infected;
-import zombies.entities.Person;
 
-public class ZombiesProperties {
+public class FlockProperties {
 
-    private static class PersonProperties {
+    private static class BirdProperties {
 
 	private final AtomicReference<Color> colour;
 	private final AtomicInteger sightRange;
 	private final AtomicLong speed;
 
-	PersonProperties(final Color colour, final int sightRange, final double speed) {
+	BirdProperties(final Color colour, final int sightRange, final double speed) {
 	    this.colour = new AtomicReference<>(colour);
 	    this.sightRange = new AtomicInteger(sightRange);
 	    this.speed = new AtomicLong(Double.doubleToLongBits(speed));
@@ -37,13 +37,13 @@ public class ZombiesProperties {
 
     private static AtomicInteger population = new AtomicInteger(100);
 
-    private static Map<Class<?>, PersonProperties> props = new HashMap<>();
+    private static Map<Class<?>, BirdProperties> props = new HashMap<>();
 
     static {
-	props.put(Healthy.class, new PersonProperties(Color.WHITE, 75, 3.0));
-	props.put(Carrier.class, new PersonProperties(Color.WHITE, 75, 3.0));
-	props.put(Infected.class, new PersonProperties(Color.RED, 50, 4.5));
-	props.put(Corpse.class, new PersonProperties(Color.DARK_GRAY, 0, 0.0));
+	props.put(Loner.class, new BirdProperties(Color.WHITE, 75, 3.0));
+	props.put(Joiner.class, new BirdProperties(Color.WHITE, 75, 3.0));
+	props.put(Flocker.class, new BirdProperties(Color.RED, 50, 4.5));
+	props.put(Exhausted.class, new BirdProperties(Color.DARK_GRAY, 0, 0.0));
     }
 
     public static Color getColour(final Class<? extends Entity> type) {
@@ -75,35 +75,35 @@ public class ZombiesProperties {
     }
 
     public static void setHealthySightRange(final int sightRange) {
-	setSightRange(Healthy.class, sightRange);
+	setSightRange(Loner.class, sightRange);
     }
 
     public static void setInfectedRelativeSpeed(final double percentage) {
 	final double fraction = percentage / 100;
-	props.get(Infected.class).speed.set(Double.doubleToLongBits(fraction * getSpeed(Healthy.class)));
+	props.get(Flocker.class).speed.set(Double.doubleToLongBits(fraction * getSpeed(Loner.class)));
     }
 
     public static void setInfectedSightRange(final int sightRange) {
-	setSightRange(Infected.class, sightRange);
+	setSightRange(Flocker.class, sightRange);
     }
 
     public static void setInfectionTime(final double infectionTime) {
-	ZombiesProperties.infectionTime.set(Double.doubleToLongBits(infectionTime));
+	FlockProperties.infectionTime.set(Double.doubleToLongBits(infectionTime));
     }
 
     public static void setPopulation(final int population) {
-	ZombiesProperties.population.set(population);
+	FlockProperties.population.set(population);
     }
 
-    private static void setSightRange(final Class<? extends Person> type, final int sightRange) {
+    private static void setSightRange(final Class<? extends Bird> type, final int sightRange) {
 	props.get(type).sightRange.set(Math.max(sightRange, SIZE));
     }
 
-    public static void setSpeed(final Class<? extends Person> type, final double speed) {
+    public static void setSpeed(final Class<? extends Bird> type, final double speed) {
 	props.get(type).speed.set(Double.doubleToLongBits(speed));
     }
 
     public static void setStarveTime(final double starveTime) {
-	ZombiesProperties.starveTime.set(Double.doubleToLongBits(starveTime));
+	FlockProperties.starveTime.set(Double.doubleToLongBits(starveTime));
     }
 }

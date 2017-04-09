@@ -1,43 +1,43 @@
-package zombies.attributes;
+package flockofbirds.attributes;
 
-import static zombies.ZombiesPanel.TICK_INTERVAL;
+import static flockofbirds.FlockPanel.TICK_INTERVAL;
 
 import java.awt.Color;
 import java.util.concurrent.TimeUnit;
 
+import flockofbirds.FlockProperties;
+import flockofbirds.actions.Starve;
+import flockofbirds.entities.Joiner;
+import flockofbirds.entities.Loner;
+import flockofbirds.entities.Flocker;
+import flockofbirds.entities.Bird;
 import jalse.attributes.AttributeEvent;
 import jalse.attributes.AttributeListener;
 import jalse.entities.Entity;
-import zombies.ZombiesProperties;
-import zombies.actions.Starve;
-import zombies.entities.Carrier;
-import zombies.entities.Healthy;
-import zombies.entities.Infected;
-import zombies.entities.Person;
 
-public class InfectionListener implements AttributeListener<Double> {
+public class FlockingListener implements AttributeListener<Double> {
 
-    public static void infectPerson(final Person p) {
+    public static void infectPerson(final Bird p) {
 	p.cancelAllScheduledForActor();
-	p.markAsType(Infected.class);
+	p.markAsType(Flocker.class);
 	p.scheduleForActor(new Starve(), TICK_INTERVAL, TICK_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void attributeAdded(final AttributeEvent<Double> event) {
-	final Person person = ((Entity) event.getContainer()).asType(Person.class);
+	final Bird person = ((Entity) event.getContainer()).asType(Bird.class);
 	final double infection = event.getValue();
 
 	// Check infected
 	if (infection >= 1.0) {
-	    person.unmarkAsType(Carrier.class);
+	    person.unmarkAsType(Joiner.class);
 	    infectPerson(person);
 	    return;
 	}
 
 	// Base colours
-	final Color healthyColour = ZombiesProperties.getColour(Healthy.class);
-	final Color infectedColour = ZombiesProperties.getColour(Infected.class);
+	final Color healthyColour = FlockProperties.getColour(Loner.class);
+	final Color infectedColour = FlockProperties.getColour(Flocker.class);
 
 	// Gradually transition from "healthy" to "infected" color
 	final float r = (float) ((healthyColour.getRed() * (1. - infection) + infectedColour.getRed() * infection)

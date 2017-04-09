@@ -1,4 +1,4 @@
-package zombies.entities;
+package flockofbirds.entities;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -7,7 +7,7 @@ import jalse.entities.Entity;
 import jalse.entities.annotations.GetAttribute;
 import jalse.entities.annotations.SetAttribute;
 
-public interface Person extends Entity {
+public interface Bird extends Entity {
 
     @GetAttribute
     double getAngle();

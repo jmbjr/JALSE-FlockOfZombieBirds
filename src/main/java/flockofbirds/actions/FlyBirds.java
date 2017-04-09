@@ -1,4 +1,4 @@
-package zombies.actions;
+package flockofbirds.actions;
 
 import static jalse.entities.Entities.isMarkedAsType;
 import static jalse.entities.Entities.notMarkedAsType;
@@ -10,27 +10,27 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import flockofbirds.FlockPanel;
+import flockofbirds.FlockProperties;
+import flockofbirds.entities.Joiner;
+import flockofbirds.entities.Exhausted;
+import flockofbirds.entities.Field;
+import flockofbirds.entities.Loner;
+import flockofbirds.entities.Flocker;
+import flockofbirds.entities.Bird;
 import jalse.actions.Action;
 import jalse.actions.ActionContext;
 import jalse.entities.Entity;
-import zombies.ZombiesPanel;
-import zombies.ZombiesProperties;
-import zombies.entities.Carrier;
-import zombies.entities.Corpse;
-import zombies.entities.Field;
-import zombies.entities.Healthy;
-import zombies.entities.Infected;
-import zombies.entities.Person;
 
-public class MovePeople implements Action<Entity> {
+public class FlyBirds implements Action<Entity> {
 
     private static int bounded(final int value, final int min, final int max) {
 	return value < min ? min : value > max ? max : value;
     }
 
-    public static Double directionAwayFromInfected(final Person person, final Set<Person> people) {
+    public static Double directionAwayFromInfected(final Bird person, final Set<Bird> people) {
 	// Find closest infected to hide from
-	final Optional<Person> closestInfected = getClosestPersonOfType(person, people, Infected.class);
+	final Optional<Bird> closestInfected = getClosestPersonOfType(person, people, Flocker.class);
 
 	// Cannot see any
 	if (!closestInfected.isPresent()) {
@@ -48,9 +48,9 @@ public class MovePeople implements Action<Entity> {
 	return Math.atan2(dy, dx);
     }
 
-    private static Double directionToHealthyAndBite(final Person person, final Set<Person> people) {
+    private static Double directionToHealthyAndBite(final Bird person, final Set<Bird> people) {
 	// Find closest healthy person in sight
-	final Optional<Person> closestHealthy = getClosestPersonOfType(person, people, Healthy.class);
+	final Optional<Bird> closestHealthy = getClosestPersonOfType(person, people, Loner.class);
 
 	// Check can see any
 	if (!closestHealthy.isPresent()) {
@@ -58,7 +58,7 @@ public class MovePeople implements Action<Entity> {
 	}
 
 	// Healthy person
-	final Person healthy = closestHealthy.get();
+	final Bird healthy = closestHealthy.get();
 
 	// Towards
 	final Point personPos = person.getPosition();
@@ -66,16 +66,16 @@ public class MovePeople implements Action<Entity> {
 	final int dy = healthy.getPosition().y - personPos.y;
 
 	// Check in range of biting
-	final int size = ZombiesProperties.getSize();
+	final int size = FlockProperties.getSize();
 	if (dx * dx + dy * dy < size * size) {
-	    person.asType(Infected.class).bite(healthy);
+	    person.asType(Flocker.class).bite(healthy);
 	}
 
 	// Convert
 	return Math.atan2(dy, dx);
     }
 
-    private static Optional<Person> getClosestPersonOfType(final Person person, final Set<Person> people,
+    private static Optional<Bird> getClosestPersonOfType(final Bird person, final Set<Bird> people,
 	    final Class<? extends Entity> type) {
 	final Point personPos = person.getPosition();
 	final Integer sightRange = person.getSightRange();
@@ -96,21 +96,21 @@ public class MovePeople implements Action<Entity> {
 	}));
     }
 
-    private static Double randomDirection(final Person person) {
+    private static Double randomDirection(final Bird person) {
 	return person.getAngle() + 2. * (ThreadLocalRandom.current().nextDouble() - 0.5);
     }
 
     @Override
     public void perform(final ActionContext<Entity> context) throws InterruptedException {
 	final Field field = context.getActor().asType(Field.class);
-	final Set<Person> people = field.getEntitiesOfType(Person.class);
-	people.stream().filter(notMarkedAsType(Corpse.class)).forEach(person -> {
+	final Set<Bird> people = field.getEntitiesOfType(Bird.class);
+	people.stream().filter(notMarkedAsType(Exhausted.class)).forEach(person -> {
 	    // Get correct move angle
 	    double moveAngle;
-	    if (person.isMarkedAsType(Infected.class)) {
+	    if (person.isMarkedAsType(Flocker.class)) {
 		// Move towards healthy
 		moveAngle = directionToHealthyAndBite(person, people);
-	    } else if (person.isMarkedAsType(Carrier.class)) {
+	    } else if (person.isMarkedAsType(Joiner.class)) {
 		// Move randomly
 		moveAngle = randomDirection(person);
 	    } else {
@@ -126,11 +126,11 @@ public class MovePeople implements Action<Entity> {
 
 	    // Original values
 	    final Point pos = person.getPosition();
-	    final int size = ZombiesProperties.getSize();
+	    final int size = FlockProperties.getSize();
 
 	    // Apply bounded move delta
-	    final int x = bounded(pos.x + moveDelta.x, 0, ZombiesPanel.WIDTH - size);
-	    final int y = bounded(pos.y + moveDelta.y, 0, ZombiesPanel.HEIGHT - size);
+	    final int x = bounded(pos.x + moveDelta.x, 0, FlockPanel.WIDTH - size);
+	    final int y = bounded(pos.y + moveDelta.y, 0, FlockPanel.HEIGHT - size);
 
 	    if (pos.x != x || pos.y != y) {
 		// Update if changed

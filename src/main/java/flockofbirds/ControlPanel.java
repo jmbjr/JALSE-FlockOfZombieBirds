@@ -1,4 +1,4 @@
-package zombies;
+package flockofbirds;
 
 import java.awt.Component;
 import java.util.EventObject;
@@ -12,8 +12,8 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeListener;
 
-import zombies.entities.Healthy;
-import zombies.entities.Infected;
+import flockofbirds.entities.Loner;
+import flockofbirds.entities.Flocker;
 
 @SuppressWarnings("serial")
 public class ControlPanel extends JPanel {
@@ -38,13 +38,13 @@ public class ControlPanel extends JPanel {
 	return ((JSlider) e.getSource()).getValue();
     }
 
-    public ControlPanel(final ZombiesPanel zombiesPanel) {
+    public ControlPanel(final FlockPanel zombiesPanel) {
 	setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 	// Population
 	add(newLabel("Population"));
-	add(newSlider(0, 200, 50, ZombiesProperties.getPopulation(), e -> {
-	    ZombiesProperties.setPopulation(sliderValue(e));
+	add(newSlider(0, 200, 50, FlockProperties.getPopulation(), e -> {
+	    FlockProperties.setPopulation(sliderValue(e));
 	    zombiesPanel.adjustPopulation();
 	}));
 	add(Box.createVerticalGlue());
@@ -52,39 +52,39 @@ public class ControlPanel extends JPanel {
 	// Infected speed
 	add(newLabel("Infected Relative Speed (%)"));
 	add(newSlider(50, 200, 50,
-		(int) (100 * ZombiesProperties.getSpeed(Infected.class) / ZombiesProperties.getSpeed(Healthy.class)),
+		(int) (100 * FlockProperties.getSpeed(Flocker.class) / FlockProperties.getSpeed(Loner.class)),
 		e -> {
-		    ZombiesProperties.setInfectedRelativeSpeed(sliderValue(e));
+		    FlockProperties.setInfectedRelativeSpeed(sliderValue(e));
 		    zombiesPanel.adjustInfectedSpeed();
 		}));
 	add(Box.createVerticalGlue());
 
 	// Healthy sight
 	add(newLabel("Healthy Sight Range"));
-	add(newSlider(0, 200, 50, ZombiesProperties.getSightRange(Healthy.class), e -> {
-	    ZombiesProperties.setHealthySightRange(sliderValue(e));
-	    zombiesPanel.adjustSightRange(Healthy.class);
+	add(newSlider(0, 200, 50, FlockProperties.getSightRange(Loner.class), e -> {
+	    FlockProperties.setHealthySightRange(sliderValue(e));
+	    zombiesPanel.adjustSightRange(Loner.class);
 	}));
 	add(Box.createVerticalGlue());
 
 	// Infected sight
 	add(newLabel("Infected Sight Range"));
-	add(newSlider(0, 200, 50, ZombiesProperties.getSightRange(Infected.class), e -> {
-	    ZombiesProperties.setInfectedSightRange(sliderValue(e));
-	    zombiesPanel.adjustSightRange(Infected.class);
+	add(newSlider(0, 200, 50, FlockProperties.getSightRange(Flocker.class), e -> {
+	    FlockProperties.setInfectedSightRange(sliderValue(e));
+	    zombiesPanel.adjustSightRange(Flocker.class);
 	}));
 	add(Box.createVerticalGlue());
 
 	// Infection time
 	add(newLabel("Infection Time (s.)"));
-	add(newSlider(0, 30, 5, (int) ZombiesProperties.getInfectionTime(),
-		e -> ZombiesProperties.setInfectionTime(sliderValue(e))));
+	add(newSlider(0, 30, 5, (int) FlockProperties.getInfectionTime(),
+		e -> FlockProperties.setInfectionTime(sliderValue(e))));
 	add(Box.createVerticalGlue());
 
 	// Starvation time
 	add(newLabel("Starvation Time (s.)"));
-	add(newSlider(0, 30, 5, (int) ZombiesProperties.getStarveTime(),
-		e -> ZombiesProperties.setStarveTime(sliderValue(e))));
+	add(newSlider(0, 30, 5, (int) FlockProperties.getStarveTime(),
+		e -> FlockProperties.setStarveTime(sliderValue(e))));
 	add(Box.createVerticalGlue());
 
 	// Reset

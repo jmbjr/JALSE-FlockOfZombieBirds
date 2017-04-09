@@ -1,4 +1,4 @@
-package zombies.entities;
+package flockofbirds.entities;
 
 import java.awt.Dimension;
 import java.util.UUID;
@@ -20,5 +20,5 @@ public interface Field extends Entity {
     void setSize(Dimension size);
 
     @StreamEntities
-    Stream<Person> streamPeople();
+    Stream<Bird> streamPeople();
 }

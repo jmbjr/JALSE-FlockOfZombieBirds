@@ -1,4 +1,4 @@
-package zombies.entities;
+package flockofbirds.entities;
 
 import static jalse.attributes.Attributes.newNamedDoubleType;
 
@@ -6,7 +6,7 @@ import jalse.attributes.NamedAttributeType;
 import jalse.entities.annotations.GetAttribute;
 import jalse.entities.annotations.SetAttribute;
 
-public interface Carrier extends Person {
+public interface Joiner extends Bird {
 
     final NamedAttributeType<Double> INFECTION_PERCENTAGE_TYPE = newNamedDoubleType("infectionPercentage");
 

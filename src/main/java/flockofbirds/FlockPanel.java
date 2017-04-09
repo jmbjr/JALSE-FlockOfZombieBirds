@@ -1,4 +1,4 @@
-package zombies;
+package flockofbirds;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,31 +16,31 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import flockofbirds.actions.FlyBirds;
+import flockofbirds.attributes.FlockingListener;
+import flockofbirds.attributes.ExhaustedListener;
+import flockofbirds.entities.Joiner;
+import flockofbirds.entities.Field;
+import flockofbirds.entities.Loner;
+import flockofbirds.entities.Flocker;
+import flockofbirds.entities.Bird;
+import flockofbirds.entities.TransformationListener;
 import jalse.DefaultJALSE;
 import jalse.JALSE;
 import jalse.entities.Entities;
 import jalse.entities.Entity;
-import zombies.actions.MovePeople;
-import zombies.attributes.InfectionListener;
-import zombies.attributes.StarvationListener;
-import zombies.entities.Carrier;
-import zombies.entities.Field;
-import zombies.entities.Healthy;
-import zombies.entities.Infected;
-import zombies.entities.Person;
-import zombies.entities.TransformationListener;
 
 @SuppressWarnings("serial")
-public class ZombiesPanel extends JPanel implements ActionListener, MouseListener {
+public class FlockPanel extends JPanel implements ActionListener, MouseListener {
 
     public static final int TICK_INTERVAL = 1000 / 30;
 
     public static final int WIDTH = 700;
     public static final int HEIGHT = 500;
 
-    private static void drawElement(final Graphics g, final Person person) {
+    private static void drawElement(final Graphics g, final Bird person) {
 	final Point position = person.getPosition();
-	final int size = ZombiesProperties.getSize();
+	final int size = FlockProperties.getSize();
 	g.setColor(Color.BLACK);
 	g.fillOval(position.x - 2, position.y - 2, size + 4, size + 4);
 	g.setColor(person.getColour());
@@ -49,7 +49,7 @@ public class ZombiesPanel extends JPanel implements ActionListener, MouseListene
 
     private final JALSE jalse;
 
-    public ZombiesPanel() {
+    public FlockPanel() {
 	// Manually ticked JALSE
 	jalse = new DefaultJALSE.Builder().setManualEngine().build();
 	// Create data model
@@ -74,22 +74,22 @@ public class ZombiesPanel extends JPanel implements ActionListener, MouseListene
     }
 
     private void addPersonAtRandomPosition() {
-	final Person person = getField().newEntity(Person.class);
+	final Bird person = getField().newEntity(Bird.class);
 	person.setPosition(randomPosition());
 	person.setAngle(randomAngle());
-	person.addAttributeListener(Carrier.INFECTION_PERCENTAGE_TYPE, new InfectionListener());
-	person.addAttributeListener(Infected.HUNGER_PERCENTAGE_TYPE, new StarvationListener());
+	person.addAttributeListener(Joiner.INFECTION_PERCENTAGE_TYPE, new FlockingListener());
+	person.addAttributeListener(Flocker.HUNGER_PERCENTAGE_TYPE, new ExhaustedListener());
 	person.addEntityTypeListener(new TransformationListener());
-	person.markAsType(Healthy.class);
+	person.markAsType(Loner.class);
     }
 
     public void adjustInfectedSpeed() {
-	final double speed = ZombiesProperties.getSpeed(Infected.class);
-	getField().streamEntitiesOfType(Infected.class).forEach(p -> p.setSpeed(speed));
+	final double speed = FlockProperties.getSpeed(Flocker.class);
+	getField().streamEntitiesOfType(Flocker.class).forEach(p -> p.setSpeed(speed));
     }
 
     public void adjustPopulation() {
-	final int population = ZombiesProperties.getPopulation();
+	final int population = FlockProperties.getPopulation();
 	int count = getField().getEntityCount();
 	// Increase population
 	while (count < population) {
@@ -103,8 +103,8 @@ public class ZombiesPanel extends JPanel implements ActionListener, MouseListene
 	}
     }
 
-    public void adjustSightRange(final Class<? extends Person> type) {
-	final int sightRange = ZombiesProperties.getSightRange(type);
+    public void adjustSightRange(final Class<? extends Bird> type) {
+	final int sightRange = FlockProperties.getSightRange(type);
 	getField().streamEntitiesOfType(type).forEach(p -> p.setSightRange(sightRange));
     }
 
@@ -112,7 +112,7 @@ public class ZombiesPanel extends JPanel implements ActionListener, MouseListene
 	// Create field
 	final Field field = jalse.newEntity(Field.ID, Field.class);
 	field.setSize(new Dimension(WIDTH, HEIGHT));
-	field.scheduleForActor(new MovePeople(), 0, TICK_INTERVAL, TimeUnit.MILLISECONDS);
+	field.scheduleForActor(new FlyBirds(), 0, TICK_INTERVAL, TimeUnit.MILLISECONDS);
 
 	// Create randomly-placed healthy people
 	reset();
@@ -126,15 +126,15 @@ public class ZombiesPanel extends JPanel implements ActionListener, MouseListene
     public void mouseClicked(final MouseEvent e) {
 	// Infect clicked person(s)
 	final Point point = e.getPoint();
-	final int size = ZombiesProperties.getSize();
+	final int size = FlockProperties.getSize();
 	getField().streamPeople().filter(p -> {
 	    final Point pos = p.getPosition();
 	    return pos.x - 5 <= point.x && pos.x + size + 5 >= point.x && pos.y - 5 <= point.y
 		    && pos.y + size + 5 >= point.y;
 	}).forEach(p -> {
 	    // Infect if not infected already
-	    if (p.unmarkAsType(Healthy.class) || p.unmarkAsType(Carrier.class)) {
-		InfectionListener.infectPerson(p);
+	    if (p.unmarkAsType(Loner.class) || p.unmarkAsType(Joiner.class)) {
+		FlockingListener.infectPerson(p);
 	    }
 	});
     }
@@ -169,7 +169,7 @@ public class ZombiesPanel extends JPanel implements ActionListener, MouseListene
     }
 
     private Point randomPosition() {
-	final int size = ZombiesProperties.getSize();
+	final int size = FlockProperties.getSize();
 	final Random rand = ThreadLocalRandom.current();
 	return new Point(size + rand.nextInt(WIDTH), size + rand.nextInt(HEIGHT));
     }
@@ -182,7 +182,7 @@ public class ZombiesPanel extends JPanel implements ActionListener, MouseListene
 	// Kill them all
 	getField().killEntities();
 	// Create randomly-placed healthy people
-	final int population = ZombiesProperties.getPopulation();
+	final int population = FlockProperties.getPopulation();
 	for (int i = 0; i < population; i++) {
 	    addPersonAtRandomPosition();
 	}
