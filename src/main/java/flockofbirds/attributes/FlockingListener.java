@@ -17,10 +17,10 @@ import jalse.entities.Entity;
 
 public class FlockingListener implements AttributeListener<Double> {
 
-    public static void enflockBird(final Bird p) {
-	p.cancelAllScheduledForActor();
-	p.markAsType(Flocker.class);
-	p.scheduleForActor(new Exhaust(), TICK_INTERVAL, TICK_INTERVAL, TimeUnit.MILLISECONDS);
+    public static void enflockBird(final Bird b) {
+	b.cancelAllScheduledForActor();
+	b.markAsType(Flocker.class);
+	b.scheduleForActor(new Exhaust(), TICK_INTERVAL, TICK_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class FlockingListener implements AttributeListener<Double> {
 	final Bird bird = ((Entity) event.getContainer()).asType(Bird.class);
 	final double flocking = event.getValue();
 
-	// Check infected
+	// Check if flocking
 	if (flocking >= 1.0) {
 	    bird.unmarkAsType(Joiner.class);
 	    enflockBird(bird);

@@ -114,7 +114,7 @@ public class FlockPanel extends JPanel implements ActionListener, MouseListener 
 	field.setSize(new Dimension(WIDTH, HEIGHT));
 	field.scheduleForActor(new FlyBirds(), 0, TICK_INTERVAL, TimeUnit.MILLISECONDS);
 
-	// Create randomly-placed healthy people
+	// Create randomly-placed loner birds
 	reset();
     }
 

@@ -80,8 +80,8 @@ public class FlyBirds implements Action<Entity> {
 	final Point birdPos = bird.getPosition();
 	final Integer sightRange = bird.getSightRange();
 	// Stream other entities of type
-	return birds.stream().filter(not(bird)).filter(isMarkedAsType(type)).filter(p -> {
-	    final Point pPos = p.getPosition();
+	return birds.stream().filter(not(bird)).filter(isMarkedAsType(type)).filter(b -> {
+	    final Point pPos = b.getPosition();
 	    // Within range
 	    return Math.abs(pPos.x - birdPos.x) <= sightRange && Math.abs(pPos.y - birdPos.y) <= sightRange;
 	}).collect(Collectors.minBy((a, b) -> {
@@ -109,7 +109,7 @@ public class FlyBirds implements Action<Entity> {
 	    // Get correct move angle
 	    double moveAngle;
 	    if (bird.isMarkedAsType(Flocker.class)) {
-		// Move towards healthy
+		// Move towards loner
 		moveAngle = directionToLonerAndJoin(bird, birds);
 	    } else if (bird.isMarkedAsType(Joiner.class)) {
 		// Move randomly
